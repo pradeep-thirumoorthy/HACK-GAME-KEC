@@ -6,7 +6,7 @@ const socket = io('http://localhost:3000'); // Connect to the server
 const App = () => {
     const [direction, setDirection] = useState(null);
     const [otherDirections, setOtherDirections] = useState([]);
-
+    const [Position,setPosition]=useState();
     useEffect(() => {
         
         

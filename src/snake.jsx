@@ -34,16 +34,15 @@ function SnakeGame() {
         // Check for collisions with walls
         if (newX < 0 || newY < 0 || newX >= gridSize || newY >= gridSize) {
             console.log("Game Over!");
-            setSnake([{ x: 10, y: 10 }]); // Reset the snake position
-            setFood({ x: 5, y: 5 }); // Reset the food position
+            setSnake([{ x: 10, y: 10 }]);
+            setFood({ x: 5, y: 5 });
             return;
         }
 
-        // Remove the tail segment if it's not on food
         if (newX !== food.x || newY !== food.y) {
             newSnake.pop();
         } else {
-            generateFood(); // Generate new food if the snake eats it
+            generateFood();
         }
 
         // Update the snake

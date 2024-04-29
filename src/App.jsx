@@ -6,9 +6,8 @@ function App() {
 
   return (
     <>
-<RealSnake/>
-  {/* <App2/>
-      <SnakeGame/> */}
+      <RealSnake/>
+      <SnakeGame/>
     </>
   )
 }
