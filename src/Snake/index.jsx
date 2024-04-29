@@ -6,7 +6,7 @@ const socket = io('http://localhost:3000'); // Connect to the server
 const App = () => {
     const [direction, setDirection] = useState(null);
     const [otherDirections, setOtherDirections] = useState([]);
-    const [Position,setPosition]=useState();
+    
     useEffect(() => {
         
         
@@ -22,14 +22,18 @@ const App = () => {
         };
 
         document.addEventListener('keydown', handleKeyDown);
-
-        // Listen for direction events from the server
         socket.on('userConnected', (userid) => {
             setOtherDirections(prevState => [...prevState,{id:`${userid} is Connected`}]);
         });
+
+
+
         socket.on('direction', ({ id, direction }) => {
             setOtherDirections(prevState => [...prevState, { id, direction }]);
         });
+
+
+
         socket.on('userDisconnected', (userid) => {
             setOtherDirections(prevState => prevState.filter(direction => direction.id !== userid));
             
@@ -41,7 +45,12 @@ const App = () => {
             socket.off('direction');
         };
     }, []);
-
+    useEffect(()=>{
+        socket.on('getIntial', (array) => {
+            // Assuming 'array' contains the initial data received from the server
+            setOtherDirections(array.map(item => ({ id: item.id, direction: item.direction })));
+        });
+    })
     return (
         <div>
             <h1>Real-time Game</h1>

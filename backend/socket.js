@@ -2,30 +2,34 @@ const socketManager=((io,PlayerPos)=>{
     io.on('connection', (socket) => {
         console.log('A user connected');
         
-
         socket.broadcast.emit('userConnected', socket.id);
-        //In Server Side::::
+        const data={id:socket.id,PlayerPos};
+        socket.emit('getIntial',PlayerPos);
+        
+        PlayerPos.push({id:socket.id,direction:'Right'});
 
-
-        // socket.on('action trigger',(variable_from_client)=>{
-        //    process the data based on your need of the action;
-        // });
-
-
+        function updateDirectionById(id, newDirection) {
+            const index = PlayerPos.findIndex(item => item.id === id);
+            if (index !== -1) {
+                PlayerPos[index].direction = newDirection;
+            }
+        }
+        function RemoveUser(id) {
+            PlayerPos=PlayerPos.filter(Player =>Player.id!==id);
+        };
+        socket.on('disconnect', () => {
+            console.log('User disconnected');
+            RemoveUser(socket.id);
+            socket.broadcast.emit('userDisconnected', socket.id);
+        });
         socket.on('direction', (direction) => {
             socket.broadcast.emit('direction', { id: socket.id, direction });
+            updateDirectionById(socket.id,direction);
             console.log('direction', direction);
         });
     
 
-
         
-
-
-        socket.on('disconnect', () => {
-            console.log('User disconnected');
-            socket.broadcast.emit('userDisconnected', socket.id);
-        });
     });
 })
 export default socketManager;
