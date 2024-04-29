@@ -15,6 +15,8 @@ const io = new Server(server, {
     methods: ["GET", "POST"]
   }
 });
+app.use(bodyParser.json({ limit: '500mb' })); // Adjust the limit according to your needs
+app.use(bodyParser.urlencoded({ extended: true, limit: '500mb' })); // Adjust the limit according to your needs
 
 var PlayerPos = [];
 app.use(bodyParser.urlencoded({ extended: true }));

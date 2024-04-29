@@ -1,37 +1,33 @@
 import { useState } from 'react'
 import axios from 'axios'
+import { useNavigate } from 'react-router-dom';
 
 
 
-function User() {
+function Login() {
  
-
-  const [selectedColor, setSelectedColor] = useState('red');
   const [name,setName]=useState('');
-  const handleColorClick = (color) => {
-    setSelectedColor(color);
+  
+  const navigate=useNavigate();
+  const submitToLogin = async () => {
+    try {
+      const response = await axios.post(
+        'http://localhost:3000/user/login',
+        { name }
+      );
+      console.log(response.data[0].name);
+      sessionStorage.setItem('user',response.data[0].name)
+      window.location.pathname='/game';
+    } catch (error) {
+      console.error(error);
+    }
   };
-  const submitToBackend=()=>
-  {
-    axios.post("http://localhost:3000/user",{name,color:selectedColor})
-    .then(result=>
-    {
-      console.log(result);
-    })
-    .catch
-    (
-      err=>console.log(err)
-    )
- }
 
   return (
    <div className='body '>
     
     <div className='row my-5 '>
       <div className='col-6 p-5'>
-      <div className='color' style={{ backgroundColor: selectedColor }}>
-        
-      </div>
       </div>
       <div className='col-6 p-4'>
         <div className='mx-5'>
@@ -39,7 +35,7 @@ function User() {
         </div>
         <div className='mx-5'>
             <input className='w-75' size={20} onChange={(e)=>setName(e.target.value)}></input><br></br><br></br>
-            <button  className='' onClick={submitToBackend}> Submit</button>
+            <button  className='' onClick={submitToLogin}> Submit</button>
         </div>
       </div>
     </div>
@@ -47,4 +43,4 @@ function User() {
   )
 }
 
-export default User;
+export default Login;

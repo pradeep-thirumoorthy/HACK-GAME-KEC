@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import axios from 'axios'
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -8,6 +9,7 @@ function User() {
 
   const [selectedColor, setSelectedColor] = useState('red');
   const [name,setName]=useState('');
+  const navigate=useNavigate();
   const handleColorClick = (color) => {
     setSelectedColor(color);
   };
@@ -17,6 +19,7 @@ function User() {
     .then(result=>
     {
       console.log(result);
+      navigate('/login');
     })
     .catch
     (
