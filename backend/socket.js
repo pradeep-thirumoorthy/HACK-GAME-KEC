@@ -1,4 +1,4 @@
-const socketManager=((io)=>{
+const socketManager=((io,PlayerPos)=>{
     io.on('connection', (socket) => {
         console.log('A user connected');
         
