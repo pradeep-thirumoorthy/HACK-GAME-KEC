@@ -3,7 +3,6 @@ const socketManager=((io,PlayerPos)=>{
         console.log('A user connected');
         
         socket.broadcast.emit('userConnected', socket.id);
-        const data={id:socket.id,PlayerPos};
         socket.emit('getIntial',PlayerPos);
         
         PlayerPos.push({id:socket.id,direction:'Right'});
@@ -27,9 +26,6 @@ const socketManager=((io,PlayerPos)=>{
             updateDirectionById(socket.id,direction);
             console.log('direction', direction);
         });
-    
-
-        
     });
 })
 export default socketManager;
