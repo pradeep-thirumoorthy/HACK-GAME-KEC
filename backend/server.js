@@ -18,7 +18,6 @@ const io = new Server(server, {
 app.use(bodyParser.json({ limit: '500mb' })); // Adjust the limit according to your needs
 app.use(bodyParser.urlencoded({ extended: true, limit: '500mb' })); // Adjust the limit according to your needs
 
-var PlayerPos = [];
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
@@ -36,9 +35,9 @@ const db = mongoose.connection;
 
 app.use(express.static('public'));
 
-HttpManager(app, PlayerPos);
+HttpManager(app);
 
-socketManager(io, PlayerPos);
+socketManager(io);
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {

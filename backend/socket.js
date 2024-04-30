@@ -1,31 +1,56 @@
-const socketManager=((io,PlayerPos)=>{
+const gameState = {
+    players: {},
+    foods: []
+  };
+  
+  const socketManager = (io) => {
     io.on('connection', (socket) => {
-        console.log('A user connected');
-        
-        socket.broadcast.emit('userConnected', socket.id);
-        socket.emit('getIntial',PlayerPos);
-        
-        PlayerPos.push({id:socket.id,direction:'Right'});
-
-        function updateDirectionById(id, newDirection) {
-            const index = PlayerPos.findIndex(item => item.id === id);
-            if (index !== -1) {
-                PlayerPos[index].direction = newDirection;
-            }
-        }
-        function RemoveUser(id) {
-            PlayerPos=PlayerPos.filter(Player =>Player.id!==id);
+      console.log('A user connected');
+  
+      socket.on('joinRoom', ({ roomId, playerName }) => {
+        socket.join(roomId);
+        console.log(roomId, playerName);
+  
+        // Function to generate a random position for a player
+        const generateRandomPosition = () => {
+          return {
+            x: Math.floor(Math.random() * 20), // Adjust the range as needed
+            y: Math.floor(Math.random() * 20) // Adjust the range as needed
+          };
         };
-        socket.on('disconnect', () => {
-            console.log('User disconnected');
-            RemoveUser(socket.id);
-            socket.broadcast.emit('userDisconnected', socket.id);
-        });
-        socket.on('direction', (direction) => {
-            socket.broadcast.emit('direction', { id: socket.id, direction });
-            updateDirectionById(socket.id,direction);
-            console.log('direction', direction);
-        });
+  
+        // Add the player to the game state with the initial direction and position
+        if (!gameState.players[playerName]) {
+          const playerPosition = generateRandomPosition();
+          gameState.players[playerName] = { direction: 'up', ...playerPosition }; // or any initial direction
+  
+          // If no food item exists yet, generate one
+          if (Object.keys(gameState.foods).length === 0) {
+            gameState.foods = generateRandomPosition();
+          }
+  
+          // Emit the initial state to all players in the room
+          io.to(roomId).emit('initialState', gameState);
+        }
+      });
+  
+      socket.on('move', ({ direction, newX, newY, playerName, roomId }) => {
+        // Update the player's position
+        if (gameState.players[playerName]) {
+          gameState.players[playerName].x = newX;
+          gameState.players[playerName].y = newY;
+          
+          // Emit the updated game state to all clients in the room
+          io.to(roomId).emit('updateGameState', gameState);
+        }
+      });
+  
+      socket.on('disconnect', () => {
+        console.log('A user disconnected');
+        // Implement any necessary cleanup logic here
+      });
+  
     });
-})
-export default socketManager;
+  };
+  
+  export default socketManager;
