@@ -3,9 +3,9 @@ import io from 'socket.io-client';
 import SnakePlayground from './SnakePlayground';
 
 const Snake = () => {
-  const [gameState, setGameState] = useState({ players: {}, foods: [] });
+  const [gameState, setGameState] = useState({ players: {}, foods: { x: 0, y: 0 } });
   const playerName = sessionStorage.getItem('user');
-  const roomId = 'room1';
+  const roomId = sessionStorage.getItem('room'); // Corrected to 'getItem'
   const socketRef = useRef(null);
   const keyListenerAdded = useRef(false);
 
@@ -21,7 +21,7 @@ const Snake = () => {
         setGameState(updatedState);
       });
 
-      socketRef.current.emit('joinRoom', { roomId, playerName }); // Change room name and player name as needed
+      socketRef.current.emit('joinRoom', { roomId, playerName });
     }
 
     if (!keyListenerAdded.current) {
@@ -55,41 +55,43 @@ const Snake = () => {
   }, [playerName, roomId]);
 
   const handleMove = (direction) => {
-    let newX, newY;
+    const player = gameState.players[playerName];
+    if (!player) return; // Player not found
 
-    // Calculate the new position based on the direction
+    const head = player.snake[0];
+    let newX = head.x;
+    let newY = head.y;
+
     switch (direction) {
       case 'up':
-        newX = gameState.players[playerName].x;
-        newY = gameState.players[playerName].y - 1;
+        newY--;
         break;
       case 'down':
-        newX = gameState.players[playerName].x;
-        newY = gameState.players[playerName].y + 1;
+        newY++;
         break;
       case 'left':
-        newX = gameState.players[playerName].x - 1;
-        newY = gameState.players[playerName].y;
+        newX--;
         break;
       case 'right':
-        newX = gameState.players[playerName].x + 1;
-        newY = gameState.players[playerName].y;
+        newX++;
         break;
       default:
         return;
     }
+
     socketRef.current.emit('move', { direction, newX, newY, roomId, playerName });
   };
 
-  const addPoints = ({playerName}) => {
-    console.log('Interface', playerName);
-    socketRef.current.emit('regenerateFood', {playerName,roomId});
-};
-  const handleLeaveRoom=()=>{
-    socketRef.current.emit('LeaveRoom',{playerName,roomId});
+  const addPoints = () => {
+    socketRef.current.emit('regenerateFood', { playerName, roomId });
+  };
+
+  const handleLeaveRoom = () => {
+    socketRef.current.emit('LeaveRoom', { playerName, roomId });
     sessionStorage.removeItem('room');
-    window.location.pathname='/game';
-  }
+    window.location.pathname = '/room';
+  };
+
   return (
     <div>
       <div>
@@ -111,7 +113,7 @@ const Snake = () => {
         <button onClick={() => handleMove('left')}>Move Left</button>
         <button onClick={() => handleMove('right')}>Move Right</button>
         <button onClick={handleLeaveRoom}>Leave Room</button>
-        <SnakePlayground gameState={gameState} addPoints={addPoints}/>
+        <SnakePlayground gameState={gameState} addPoints={addPoints} />
       </div>
     </div>
   );

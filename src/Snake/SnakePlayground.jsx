@@ -1,32 +1,20 @@
 import React from 'react';
 
-const SnakePlayground = ({ gameState, addPoints }) => {
-  // Function to render each snake
-  const renderSnake = (playerName, player) => {
+const SnakePlayground = ({ gameState }) => {
+  const renderSnake = (player) => {
     const blockSize = 20; // Size of each block
     const separation = 15; // Separation between blocks
 
-    const xPos = player.x * (blockSize + separation);
-    const yPos = player.y * (blockSize + separation);
-
-    return (
+    return player.snake.map((segment, index) => (
       <rect
-        key={playerName}
-        x={xPos}
-        y={yPos}
+        key={index}
+        x={segment.x * (blockSize + separation)}
+        y={segment.y * (blockSize + separation)}
         width={blockSize}
         height={blockSize}
         fill="green"
       />
-    );
-  };
-
-  // Function to handle collision between snake and food
-  const handleFoodCollision = (playerName, player) => {
-    if (player.x === gameState.foods.x && player.y === gameState.foods.y) {
-      console.log("Points Added")
-      addPoints({ playerName });
-    }
+    ));
   };
 
   // Check if food coordinates are valid numbers
@@ -50,12 +38,8 @@ const SnakePlayground = ({ gameState, addPoints }) => {
         />
       )}
 
-      {/* Render snakes */}
-      {Object.entries(gameState.players).map(([playerName, player]) => {
-        // Check for collision with food
-        handleFoodCollision(playerName, player);
-        return renderSnake(playerName, player);
-      })}
+      {/* Render snake */}
+      {Object.values(gameState.players).map((player) => renderSnake(player))}
     </svg>
   );
 };
