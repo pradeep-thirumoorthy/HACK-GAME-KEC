@@ -1,0 +1,27 @@
+body{
+    margin: 0;
+    overflow: hidden;
+   
+    
+}
+
+.box{
+
+    display: flex;
+    justify-content: center;
+    
+    align-items: center;
+   height: 95vh;
+   
+  
+}
+
+form{
+  border-radius: 5px;
+    padding-top: 100px;
+    padding-bottom: 100px;
+    padding-left: 90px;
+    padding-right: 90px;
+    background-color: #313235;
+    box-shadow: 10px 10px 8px rgb(10, 19, 22);
+}

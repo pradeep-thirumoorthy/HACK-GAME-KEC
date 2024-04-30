@@ -10,7 +10,7 @@ function App() {
   return (
     <BrowserRouter>
     <Routes>      
-      <Route path='/' element={<></>} />
+      <Route path='/' element={<SnakeGame/>} />
       {!sessionStorage.getItem('user')?<>
         <Route path='/reg' element={<User />} />
       <Route path='/login' element={<Login />} /></>:<>

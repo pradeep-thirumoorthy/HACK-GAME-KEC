@@ -2,54 +2,101 @@ import React, { useState, useEffect } from "react";
 
 function SnakeGame() {
     // Game variables
-    const [tileSize] = useState(20);
-    const [gridSize] = useState(20);
-    const [snake, setSnake] = useState([{ x: 10, y: 10 }]);
-    const [food, setFood] = useState({ x: 5, y: 5 });
-    const [direction, setDirection] = useState("right");
-    const [lastDirection, setLastDirection] = useState("right");
+    const [tileSize] = useState(35);
+    const [gridSize] = useState(35);
+    const [user, setUser] = useState(0);
+    const [snakes, setSnakes] = useState([]);
+    const [food, setFood] = useState({ x: 10, y: 10 });
 
-    // Function to move the snake
-    function moveSnake() {
-        let newX = snake[0].x;
-        let newY = snake[0].y;
-        switch (direction) {
-            case "up":
-                newY--;
-                break;
-            case "down":
-                newY++;
-                break;
-            case "left":
-                newX--;
-                break;
-            case "right":
-                newX++;
-                break;
-        }
+    useEffect(() => {
+        // Function to generate initial snakes
+        const generateInitialSnakes = () => {
+            const initialSnakes = [];
+            let v = parseInt(user);
+            try {
+                for (let i = 0; i < v; i++) {
+                    const x = Math.floor(5 + i * 3);
+                    const y = Math.floor(5 + i * 3);
+                    initialSnakes.push([{ x, y }]);
+                    console.log(initialSnakes[i]);
+                }
+                setSnakes(initialSnakes.map(snake => ({ snake, direction: "right", lastDirection: "right" })));
+            } catch (err) {
+                console.log(err);
+            }
+        };
 
-        // Add the new head to the snake
-        const newSnake = [{ x: newX, y: newY }, ...snake];
+        generateInitialSnakes();
+    }, [user]);
 
-        // Check for collisions with walls
-        if (newX < 0 || newY < 0 || newX >= gridSize || newY >= gridSize) {
-            console.log("Game Over!");
-            setSnake([{ x: 10, y: 10 }]);
-            setFood({ x: 5, y: 5 });
-            return;
-        }
+   
+    // Function to move a snake
+    function moveSnake(index) {
+        setSnakes(prevSnakes => {
+            let newSnakes = [...prevSnakes];
+            let snake = newSnakes[index].snake;
+            let direction = newSnakes[index].direction;
+            let lastDirection = newSnakes[index].lastDirection;
 
-        if (newX !== food.x || newY !== food.y) {
-            newSnake.pop();
-        } else {
-            generateFood();
-        }
+            let newX = snake[0].x;
+            let newY = snake[0].y;
+            switch (direction) {
+                case "up":
+                    newY--;
+                    break;
+                case "down":
+                    newY++;
+                    break;
+                case "left":
+                    newX--;
+                    break;
+                case "right":
+                    newX++;
+                    break;
+                default:
+                    break;
+            }
 
-        // Update the snake
-        setSnake(newSnake);
+            // Check if the new position is within the grid
+            if (newX < 0 || newY < 0 || newX >= gridSize || newY >= gridSize) {
+                console.log("Border collision!");
+                resetGame(index);
+                return newSnakes;
+            }
 
-        // Update lastDirection for smooth turns
-        setLastDirection(direction);
+            // Check if the new position collides with the snake's body (except the head)
+            for (let i = 1; i < snake.length; i++) {
+                if (newX === snake[i].x && newY === snake[i].y) {
+                    console.log("Body collision!");
+                    resetGame(index);
+                    return newSnakes;
+                }
+            }
+
+            // Add the new head to the snake
+            const newSnake = [{ x: newX, y: newY }, ...snake];
+
+            if (newX !== food.x || newY !== food.y) {
+                newSnake.pop();
+            } else {
+                generateFood();
+            }
+
+            snake = newSnake;
+            newSnakes[index] = { snake, direction, lastDirection };
+            return newSnakes;
+        });
+    }
+
+    // Function to reset a snake's position
+    function resetGame(index) {
+        alert('Snake ' + (index + 1) + ' Game over');
+        setSnakes(prevSnakes => {
+            let newSnakes = [...prevSnakes];
+            newSnakes[index].snake = initialSnakes[index];
+            return newSnakes;
+        });
+        generateFood();
     }
 
     // Function to generate new food
@@ -59,56 +106,78 @@ function SnakeGame() {
             y: Math.floor(Math.random() * gridSize)
         });
     }
+
     useEffect(() => {
-        const frameDelay = 100; // Adjust this value for the desired speed
+        const frameDelay = 150; // Adjust this value for the desired speed
         const interval = setInterval(() => {
-            moveSnake();
+            for (let i = 0; i < snakes.length; i++) {
+                moveSnake(i);
+            }
         }, frameDelay);
         return () => clearInterval(interval);
-    }, [snake, direction]);
+    }, []);
+
     useEffect(() => {
         function handleKeyDown(event) {
-            switch (event.key) {
-                case "ArrowUp":
-                    if (lastDirection !== "down") setDirection("up");
-                    break;
-                case "ArrowDown":
-                    if (lastDirection !== "up") setDirection("down");
-                    break;
-                case "ArrowLeft":
-                    if (lastDirection !== "right") setDirection("left");
-                    break;
-                case "ArrowRight":
-                    if (lastDirection !== "left") setDirection("right");
-                    break;
-                default:
-                    break;
+            for (let i = 0; i < snakes.length; i++) {
+                let lastDirection = snakes[i].lastDirection;
+                let direction = snakes[i].direction;
+                switch (event.key) {
+                    case "ArrowUp":
+                        if (lastDirection !== "down") direction = "up";
+                        break;
+                    case "ArrowDown":
+                        if (lastDirection !== "up") direction = "down";
+                        break;
+                    case "ArrowLeft":
+                        if (lastDirection !== "right") direction = "left";
+                        break;
+                    case "ArrowRight":
+                        if (lastDirection !== "left") direction = "right";
+                        break;
+                    default:
+                        break;
+                }
+                setSnakes(prevSnakes => {
+                    let newSnakes = [...prevSnakes];
+                    newSnakes[i].direction = direction;
+                    return newSnakes;
+                });
             }
         }
         document.addEventListener("keydown", handleKeyDown);
         return () => {
             document.removeEventListener("keydown", handleKeyDown);
         };
-    }, [lastDirection]);
+    }, [snakes]);
 
     // JSX for rendering
     return (
+
+        <div>
+
+            <div className="">
+                <input onChange={(e) => setUser(e.target.value)} className="text-dark"></input>
+            </div>
         <svg
             width={gridSize * tileSize}
             height={gridSize * tileSize}
             style={{ border: "1px solid black" }}
         >
-            {/* Render snake */}
-            {snake.map((segment, index) => (
-                <rect
-                    key={index}
-                    x={segment.x * tileSize}
-                    y={segment.y * tileSize}
-                    width={tileSize}
-                    height={tileSize}
-                    fill="green"
-                />
+            {/* Render snakes */}
+            {snakes.map((snake, index) => (
+                snake.snake.map((segment, segmentIndex) => (
+                    <rect
+                        key={index * gridSize + segmentIndex}
+                        x={segment.x * tileSize}
+                        y={segment.y * tileSize}
+                        width={tileSize}
+                        height={tileSize}
+                        fill="green"
+                    />
+                ))
             ))}
+            
             {/* Render food */}
             <circle
                 cx={(food.x + 0.5) * tileSize}
@@ -117,6 +186,7 @@ function SnakeGame() {
                 fill="red"
             />
         </svg>
+        </div>
     );
 }
 
