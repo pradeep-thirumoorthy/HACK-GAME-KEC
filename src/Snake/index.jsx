@@ -7,21 +7,35 @@ const App = () => {
     const [direction, setDirection] = useState(null);
     const [otherDirections, setOtherDirections] = useState([]);
     const [Position,setPosition]=useState();
+    
     useEffect(() => {
         
         
-        const handleKeyDown = (event) => {
-            const arrowKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
-            const pressedKey = event.key;
+         const handleKeyDown = (event) => {
+        const arrowKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
+        const pressedKey = event.key;
 
-            // Only update the direction state if the pressed key is an arrow key
-            if (arrowKeys.includes(pressedKey)) {
-                setDirection(pressedKey);
-                socket.emit('direction', pressedKey);
-            }
-        };
+        if (arrowKeys.includes(pressedKey)){
+            setDirection(pressedKey);
+            socket.emit('direction', pressedKey);
+        }
+    };
+    
+    const handleKeyDownWASD = (event) => {
+        const wasdKeys = ['w', 's', 'a', 'd'];
+        const arrowDirections = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
+        const pressedKey = event.key;
 
-        document.addEventListener('keydown', handleKeyDown);
+        const index = wasdKeys.indexOf(pressedKey);
+        if (index !== -1) {
+            const direction = arrowDirections[index];
+            setDirection(direction);
+            socket.emit('direction', direction);
+        }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('keydown', handleKeyDownWASD);
 
         // Listen for direction events from the server
         socket.on('userConnected', (userid) => {
@@ -38,6 +52,7 @@ const App = () => {
 
         return () => {
             document.removeEventListener('keydown', handleKeyDown);
+            document.removeEventListener('keydown', handleKeyDownWASD);
             socket.off('direction');
         };
     }, []);
