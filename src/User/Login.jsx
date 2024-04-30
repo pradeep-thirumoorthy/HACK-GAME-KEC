@@ -1,14 +1,11 @@
 import { useState } from 'react'
 import axios from 'axios'
-import { useNavigate } from 'react-router-dom';
 
 
 
 function Login() {
  
   const [name,setName]=useState('');
-  
-  const navigate=useNavigate();
   const submitToLogin = async () => {
     try {
       const response = await axios.post(

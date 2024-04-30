@@ -1,0 +1,30 @@
+.body{
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    background-color: #4C4E52;
+    
+  
+  }
+
+  .row{
+    box-shadow: 10px 10px 8px rgb(10, 19, 22);
+    width: 70%;
+    margin-left: 300px;
+    margin-top: 140px;
+   
+    height: 60%;
+    background-color: #313235;
+  }
+
+  .col{
+   display: block;
+   justify-content: center;
+   align-items: center;
+   
+   
+  }
+  .line
+  {
+    border-left: 2px solid yellow;
+  }
