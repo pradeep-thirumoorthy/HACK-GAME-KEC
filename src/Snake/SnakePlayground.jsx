@@ -1,7 +1,7 @@
 import React from 'react';
 
-const SnakePlayground = ({ gameState }) => {
-    console.log(gameState);
+const SnakePlayground = ({ gameState, addPoints }) => {
+  // Function to render each snake
   const renderSnake = (playerName, player) => {
     const blockSize = 20; // Size of each block
     const separation = 15; // Separation between blocks
@@ -21,21 +21,41 @@ const SnakePlayground = ({ gameState }) => {
     );
   };
 
-  const foodX = (gameState.foods.x * 20) + (gameState.foods.x * 15);
-  const foodY = (gameState.foods.y * 20) + (gameState.foods.y * 15);
+  // Function to handle collision between snake and food
+  const handleFoodCollision = (playerName, player) => {
+    if (player.x === gameState.foods.x && player.y === gameState.foods.y) {
+      console.log("Points Added")
+      addPoints({ playerName });
+    }
+  };
+
+  // Check if food coordinates are valid numbers
+  const foodX = typeof gameState.foods.x === 'number' ? gameState.foods.x : 0;
+  const foodY = typeof gameState.foods.y === 'number' ? gameState.foods.y : 0;
 
   return (
-    <svg width="100%" height="100%" viewBox="0 0 2000 1500">
-      <circle
-        cx={foodX}
-        cy={foodY}
-        r={10}
-        fill="red"
-      />
-      
-      {Object.entries(gameState.players).map(([playerName, player]) =>
-        renderSnake(playerName, player)
+    <svg
+      width="100%"
+      height="100%"
+      viewBox={`0 0 ${(20 + 15) * 40} ${(20 + 15) * 30}`} // Adjust the viewBox dimensions based on your grid size
+      style={{ border: '1px solid black' }} // Add border to SVG
+    >
+      {/* Render food if coordinates are valid */}
+      {typeof foodX === 'number' && typeof foodY === 'number' && (
+        <circle
+          cx={foodX * (20 + 15) + 10}
+          cy={foodY * (20 + 15) + 10}
+          r={10}
+          fill="red"
+        />
       )}
+
+      {/* Render snakes */}
+      {Object.entries(gameState.players).map(([playerName, player]) => {
+        // Check for collision with food
+        handleFoodCollision(playerName, player);
+        return renderSnake(playerName, player);
+      })}
     </svg>
   );
 };

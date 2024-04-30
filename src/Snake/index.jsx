@@ -48,7 +48,7 @@ const Snake = () => {
 
       document.addEventListener('keydown', handleKeyDown);
       keyListenerAdded.current = true;
-
+      
       return () => {
         document.removeEventListener('keydown', handleKeyDown);
         keyListenerAdded.current = false;
@@ -85,6 +85,11 @@ const Snake = () => {
     socketRef.current.emit('move', { direction, newX, newY, roomId, playerName });
   };
 
+  const addPoints = ({playerName}) => {
+    console.log('Interface', playerName);
+    socketRef.current.emit('regenerateFood', {playerName,roomId});
+};
+
   return (
     <div>
       {/* Render your game UI using gameState */}
@@ -108,7 +113,7 @@ const Snake = () => {
         <button onClick={() => handleMove('down')}>Move Down</button>
         <button onClick={() => handleMove('left')}>Move Left</button>
         <button onClick={() => handleMove('right')}>Move Right</button>
-        <SnakePlayground gameState={gameState} />
+        <SnakePlayground gameState={gameState} addPoints={addPoints}/>
       </div>
     </div>
   );

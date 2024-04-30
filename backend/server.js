@@ -35,7 +35,7 @@ const db = mongoose.connection;
 
 app.use(express.static('public'));
 
-HttpManager(app);
+HttpManager(app,io);
 
 socketManager(io);
 
