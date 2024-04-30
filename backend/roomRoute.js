@@ -10,21 +10,22 @@ roomRoute.get('/', async (req, res) => {
   }
 });
 roomRoute.post('/add', async (req, res) => {
-    try {
-      const { name, code } = req.body;
-      const existingRoom = await Room.findOne({ code });
-      console.log(existingRoom);
-      if (existingRoom) {
-        console.log("Already available");
-        return res.status(401).json({ message: 'Code already exists' });
-      }
-     const newRoom = new Room({ name, code, users:[] });
-      await newRoom.save();
-      res.status(201).json(newRoom);
-    } catch (error) {
-      console.error('Error saving room:', error);
+  try {
+    const { name, code } = req.body;
+    const existingRoom = await Room.findOne({ code });
+    if (existingRoom) {
+      console.log("Already available");
+      return res.status(401).json({ message: 'Code already exists' });
     }
-  });
+    const newRoom = new Room({ name, code, highestScore: { playerName: '', score: 0 } });
+    await newRoom.save();
+    res.status(201).json(newRoom);
+  } catch (error) {
+    console.error('Error saving room:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 
   roomRoute.post('/check', async (req, res) => {
     try {

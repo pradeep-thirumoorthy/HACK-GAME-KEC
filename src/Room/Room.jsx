@@ -21,7 +21,7 @@ function Start()
           console.log(response.data);
           sessionStorage.setItem('room',createCode);
     
-          window.location.pathname='/game';
+          window.location.pathname='/room';
         } catch (error) {
           console.error(error);
         }
@@ -35,7 +35,7 @@ function Start()
           console.log(response.data);
           sessionStorage.setItem('room',code);
     
-          window.location.pathname='/room';
+          window.location.pathname='/game';
         } catch (error) {
           console.error(error);
         }

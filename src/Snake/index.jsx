@@ -12,12 +12,10 @@ const Snake = () => {
   useEffect(() => {
     if (!socketRef.current) {
       socketRef.current = io('http://localhost:3000'); // Change URL accordingly
-
       socketRef.current.on('initialState', (initialState) => {
         console.log(initialState);
         setGameState(initialState);
       });
-
       socketRef.current.on('updateGameState', (updatedState) => {
         console.log(updatedState);
         setGameState(updatedState);
@@ -80,8 +78,6 @@ const Snake = () => {
       default:
         return;
     }
-
-    // Emit the move request to the server
     socketRef.current.emit('move', { direction, newX, newY, roomId, playerName });
   };
 
@@ -89,11 +85,13 @@ const Snake = () => {
     console.log('Interface', playerName);
     socketRef.current.emit('regenerateFood', {playerName,roomId});
 };
-
+  const handleLeaveRoom=()=>{
+    socketRef.current.emit('LeaveRoom',{playerName,roomId});
+    sessionStorage.removeItem('room');
+    window.location.pathname='/game';
+  }
   return (
     <div>
-      {/* Render your game UI using gameState */}
-      {/* For example: */}
       <div>
         <h2>Players:</h2>
         <ul>
@@ -101,7 +99,6 @@ const Snake = () => {
             <li key={index}> {playerName}: {player.direction}</li>
           ))}
         </ul>
-
         <h2>Foods:</h2>
         <ul>
           <p>Food coordinates: x={gameState.foods.x}, y={gameState.foods.y}</p>
@@ -113,6 +110,7 @@ const Snake = () => {
         <button onClick={() => handleMove('down')}>Move Down</button>
         <button onClick={() => handleMove('left')}>Move Left</button>
         <button onClick={() => handleMove('right')}>Move Right</button>
+        <button onClick={handleLeaveRoom}>Leave Room</button>
         <SnakePlayground gameState={gameState} addPoints={addPoints}/>
       </div>
     </div>

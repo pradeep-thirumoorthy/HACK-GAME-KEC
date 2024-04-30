@@ -7,10 +7,13 @@ const roomSchema = new mongoose.Schema({
   },
   code: {
     type: String,
-    unique:true,
+    unique: true,
     required: true,
   },
-  highestScore: Number,
+  highestScore: {
+    playerName: String,
+    score: Number,
+  },
 });
 
 const Room = mongoose.model("Room", roomSchema);
