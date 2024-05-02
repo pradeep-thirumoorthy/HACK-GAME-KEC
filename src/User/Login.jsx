@@ -14,7 +14,7 @@ function Login() {
       );
       console.log(response.data[0].name);
       sessionStorage.setItem('user',response.data[0].name)
-      window.location.pathname='/game';
+      window.location.pathname='/room';
     } catch (error) {
       console.error(error);
     }
