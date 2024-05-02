@@ -1,6 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import io from 'socket.io-client';
 import SnakePlayground from './SnakePlayground';
+import Movement from './Movement';
+import { Button, Descriptions, Layout } from 'antd';
+import Sider from 'antd/es/layout/Sider';
+import { Content } from 'antd/es/layout/layout';
+import Title from 'antd/es/typography/Title';
 
 const Snake = () => {
   const [gameState, setGameState] = useState({ players: {}, foods: { x: 0, y: 0 } });
@@ -8,7 +13,6 @@ const Snake = () => {
   const roomId = sessionStorage.getItem('room'); // Corrected to 'getItem'
   const socketRef = useRef(null);
   const keyListenerAdded = useRef(false);
-
   useEffect(() => {
     if (!socketRef.current) {
       socketRef.current = io('http://localhost:3000'); // Change URL accordingly
@@ -19,6 +23,9 @@ const Snake = () => {
       socketRef.current.on('updateGameState', (updatedState) => {
         console.log(updatedState);
         setGameState(updatedState);
+      });
+      socketRef.current.on('message', (updatedState) => {
+        console.log(updatedState);
       });
 
       socketRef.current.emit('joinRoom', { roomId, playerName });
@@ -55,34 +62,11 @@ const Snake = () => {
   }, [playerName, roomId]);
 
   const handleMove = (direction) => {
-    const player = gameState.players[playerName];
-    if (!player) return; // Player not found
-
-    const head = player.snake[0];
-    let newX = head.x;
-    let newY = head.y;
-
-    switch (direction) {
-      case 'up':
-        newY--;
-        break;
-      case 'down':
-        newY++;
-        break;
-      case 'left':
-        newX--;
-        break;
-      case 'right':
-        newX++;
-        break;
-      default:
-        return;
-    }
-
-    socketRef.current.emit('move', { direction, newX, newY, roomId, playerName });
+    socketRef.current.emit('move', { direction, roomId, playerName });
   };
 
   const addPoints = () => {
+    console.log('addPoints')
     socketRef.current.emit('regenerateFood', { playerName, roomId });
   };
 
@@ -93,29 +77,33 @@ const Snake = () => {
   };
 
   return (
-    <div>
+    <Layout style={{ minHeight: '95vh',overflow:'hidden' }}>
+      <Sider theme="light" breakpoint='lg'>
       <div>
-        <h2>Players:</h2>
-        <ul>
-          {Object.entries(gameState.players).map(([playerName, player], index) => (
-            <li key={index}> {playerName}: {player.direction}</li>
-          ))}
-        </ul>
-        <h2>Foods:</h2>
-        <ul>
-          <p>Food coordinates: x={gameState.foods.x}, y={gameState.foods.y}</p>
-        </ul>
-      </div>
-      {/* Include controls to handle player movement */}
-      <div>
-        <button onClick={() => handleMove('up')}>Move Up</button>
-        <button onClick={() => handleMove('down')}>Move Down</button>
-        <button onClick={() => handleMove('left')}>Move Left</button>
-        <button onClick={() => handleMove('right')}>Move Right</button>
-        <button onClick={handleLeaveRoom}>Leave Room</button>
-        <SnakePlayground gameState={gameState} addPoints={addPoints} />
-      </div>
+        <br/>
+        <Title level={3}>High Score
+        <Descriptions bordered>
+        <Descriptions.Item key={-1} label={!(gameState.HighScore)?'':gameState.HighScore.playerName}>
+        {JSON.stringify(!(gameState.HighScore)?0:gameState.HighScore.score)}</Descriptions.Item>
+        </Descriptions>
+        </Title>
+      <Descriptions bordered title="Players" column={{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1, xxl: 1 }} >
+        {Object.entries(gameState.players).map(([playerName, player], index) => (
+          <Descriptions.Item key={index} label={playerName}>
+            {player.Score.toString()}
+          </Descriptions.Item>
+        ))}
+      </Descriptions>
     </div>
+        <Button onClick={handleLeaveRoom} style={{ margin: '20px' }}>Leave Room</Button>
+      </Sider>
+      <Layout>
+        <Content style={{ padding: '24px'}}>
+          <Movement handleMove={handleMove}/>
+          <SnakePlayground gameState={gameState} addPoints={addPoints} />
+        </Content>
+      </Layout>
+    </Layout>
   );
 };
 

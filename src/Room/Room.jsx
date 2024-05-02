@@ -3,13 +3,15 @@ import { useState } from 'react';
 
 import './Start.css';
 import axios from 'axios';
+import { Card, Input, Button } from 'antd';
 
+const { Meta } = Card;
 
 
 function Start()
 {
     const [code,setCode] =useState('');
-    const [createCode, setcreateCode]=useState('');
+    const [createCode, setCreateCode]=useState('');
 
     const handleCreate = async () => {
         try {
@@ -41,35 +43,22 @@ function Start()
       };
 
    return(
-<div className='body'>
-    <div className='row p-4'>
-     <div className=' col col-6 text-center'>
-         <div className='m-5'>
-
-            <h1 className='text-warning'>Create Room</h1>
-         </div>
-         <div className='m-5'>
-            <h1 className='text-light'>
-                <input type='text' value={createCode} onChange={(e)=>{setcreateCode(e.target.value)}}/>
-            </h1>
-         </div>
-         <div className='m-5'>
-            <button className='btn btn-warning' onClick={handleCreate}>Create</button>
-         </div>
-     </div>
-     <div className='col line col-6 text-center'>
-     <div className='m-5'>
-            <h1 className='text-warning'>Join Room</h1>
-         </div>
-         <div className='m-5'>
-        <input className='input text-light'value={code} onChange={(e)=>{setCode(e.target.value)}}></input>
-         </div>
-         <div className='m-5'>
-            <button className='btn btn-warning' onClick={handleJoin}>Join</button>
-         </div>
-     </div>
+<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' ,backgroundColor:'#4C4E52'}}>
+      <div style={{ display: 'flex', flexDirection: 'row' }}>
+        <div style={{ marginRight: '20px' }}>
+          <Card title={<h1 style={{ color: '#faad14', margin: 0 }}>Create Room</h1>} bordered={false} style={{ width: 300 }}>
+            <Input value={createCode} onChange={(e) => setCreateCode(e.target.value)} placeholder="Enter room code" />
+            <Button type="primary" style={{ marginTop: '10px' }} onClick={handleCreate}>Create</Button>
+          </Card>
+        </div>
+        <div>
+          <Card title={<h1 style={{ color: '#faad14', margin: 0 }}>Join Room</h1>} bordered={false} style={{ width: 300 }}>
+            <Input value={code} onChange={(e) => setCode(e.target.value)} placeholder="Enter room code" />
+            <Button type="primary" style={{ marginTop: '10px' }} onClick={handleJoin}>Join</Button>
+          </Card>
+        </div>
+      </div>
     </div>
-</div>
    );
 }
 

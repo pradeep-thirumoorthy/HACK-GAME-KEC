@@ -1,15 +1,14 @@
 import React from 'react';
 
+const blockSize = 10;
 const SnakePlayground = ({ gameState }) => {
   const renderSnake = (player) => {
-    const blockSize = 20; // Size of each block
-    const separation = 15; // Separation between blocks
 
     return player.snake.map((segment, index) => (
       <rect
         key={index}
-        x={segment.x * (blockSize + separation)}
-        y={segment.y * (blockSize + separation)}
+        x={segment.x * (blockSize )}
+        y={segment.y * (blockSize )}
         width={blockSize}
         height={blockSize}
         fill="green"
@@ -23,17 +22,17 @@ const SnakePlayground = ({ gameState }) => {
 
   return (
     <svg
-      width="100%"
-      height="100%"
-      viewBox={`0 0 ${(20 + 15) * 40} ${(20 + 15) * 30}`} // Adjust the viewBox dimensions based on your grid size
+      width="800px"
+      height="800px"
+      viewBox={`0 0 ${(blockSize) * 40} ${(blockSize) * 40}`} // Adjust the viewBox dimensions based on your grid size
       style={{ border: '1px solid black' }} // Add border to SVG
     >
       {/* Render food if coordinates are valid */}
       {typeof foodX === 'number' && typeof foodY === 'number' && (
         <circle
-          cx={foodX * (20 + 15) + 10}
-          cy={foodY * (20 + 15) + 10}
-          r={10}
+          cx={foodX * (blockSize ) +5}
+          cy={foodY * (blockSize) +5}
+          r={blockSize/2}
           fill="red"
         />
       )}
