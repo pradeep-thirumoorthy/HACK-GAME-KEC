@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import axios from 'axios'
+import { Button, Card, Col, Flex, Input, Row } from 'antd';
 
 
 
@@ -21,22 +22,27 @@ function Login() {
   };
 
   return (
-   <div className='body '>
-    
-    <div className='row my-5 '>
-      <div className='col-6 p-5'>
+    <Row justify="center" align="middle" style={{ minHeight: '100vh' }}>
+    <Col span={12}>
+    <Card>
+      <div>
+        <h1>Enter Name</h1>
+        <Input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Enter your name"
+          style={{ marginBottom: '1rem' }}
+        />
+        <Flex justify={'space-between'}>
+        <Button type="primary" onClick={submitToLogin}>
+          Submit
+        </Button>
+        <div>New User?<a href='/signup'>SignUp</a></div>
+        </Flex>
       </div>
-      <div className='col-6 p-4'>
-        <div className='mx-5'>
-          <h1>Enter Name</h1>
-        </div>
-        <div className='mx-5'>
-            <input className='w-75' size={20} onChange={(e)=>setName(e.target.value)}></input><br></br><br></br>
-            <button  className='' onClick={submitToLogin}> Submit</button>
-        </div>
-      </div>
-    </div>
-   </div>
+      </Card>
+    </Col>
+  </Row>
   )
 }
 

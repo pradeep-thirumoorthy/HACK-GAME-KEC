@@ -34,9 +34,10 @@ function Start()
             { code:code,name:sessionStorage.getItem('user') }
           );
           console.log(response.data);
+          
+          window.location.pathname='/game';
           sessionStorage.setItem('room',code);
     
-          window.location.pathname='/game';
         } catch (error) {
           console.error(error);
         }

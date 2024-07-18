@@ -6,14 +6,15 @@ import User from './User/user';
 import Login from './User/Login';
 import Start from './Room/Room';
 import GameInterface from './Playground/main';
+import Home from './User/Home';
 
 function App() {
   return (
     <BrowserRouter>
-    <Routes>      
-      <Route path='/' element={<GameInterface />} />
+    <Routes>
+      <Route path='/' element={<Home />} />
       {!sessionStorage.getItem('user')?<>
-        <Route path='/reg' element={<User />} />
+        <Route path='/signup' element={<User />} />
       <Route path='/login' element={<Login />} /></>:
       !sessionStorage.getItem('room')? 
       <>

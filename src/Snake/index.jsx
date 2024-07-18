@@ -10,12 +10,12 @@ import Title from 'antd/es/typography/Title';
 const Snake = () => {
   const [gameState, setGameState] = useState({ players: {}, foods: { x: 0, y: 0 } });
   const playerName = sessionStorage.getItem('user');
-  const roomId = sessionStorage.getItem('room'); // Corrected to 'getItem'
+  const roomId = sessionStorage.getItem('room');
   const socketRef = useRef(null);
   const keyListenerAdded = useRef(false);
   useEffect(() => {
     if (!socketRef.current) {
-      socketRef.current = io('http://localhost:3000'); // Change URL accordingly
+      socketRef.current = io('http://localhost:3000');
       socketRef.current.on('initialState', (initialState) => {
         console.log(initialState);
         setGameState(initialState);

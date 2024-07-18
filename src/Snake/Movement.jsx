@@ -52,7 +52,7 @@ const Movement = ({ handleMove }) => {
     }
   }, [direction, handleMove]);
 
-  return null; // Since this component doesn't render anything visible, return null
+  return null;
 };
 
 export default Movement;
